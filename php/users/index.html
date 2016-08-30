@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>title</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<meta name="robots" content="index,follow" />
+	<link rel="stylesheet" type="text/css" href="css/styles.css" />
+	<script src="js/angular.min.js" language="JavaScript" type="text/javascript"></script>
+	<script src="js/mask.min.js" language="JavaScript" type="text/javascript"></script>
+	<script src="js/adminPanel.js" language="JavaScript" type="text/javascript"></script>
+</head>
+<body>
+	<div class="adminPanel" ng-app="adminPanel">
+		<div class="pageContainer" ng-controller="adminPanelCtrl">
+			<div class="sectionContainer">
+				<h1>{{headline}}</h1>
+				<form name="newPersonForm" novalidate >
+					<span class="inputBox">
+						<input type="text" name="lastName" placeholder="Фамилия" ng-model="newPerson.lastName" required />
+						<span class="inputValidationMessage" ng-show="newPersonForm.lastName.$invalid && !newPersonForm.lastName.$pristine">Enter a valid lastName.</span>
+					</span>
+					<span class="inputBox">
+						<input type="text" name="firstName" placeholder="Имя" ng-model="newPerson.firstName" required />
+						<span class="inputValidationMessage" ng-show="newPersonForm.firstName.$invalid && !newPersonForm.firstName.$pristine">Enter a valid firstName.</span>
+					</span>
+					<span class="inputBox">
+						<input type="text" placeholder="Отчество" ng-model="newPerson.midName" />
+					</span>
+					<span class="inputBox">
+						<input type="text" name="dob" placeholder="Дата рождения" ng-model="newPerson.dob" ui-mask="99.99.9999" model-view-value="true"  ui-mask-placeholder ui-mask-placeholder-char="_" />
+					</span>
+					<span class="inputBox">
+						<input type="text" placeholder="Мобильный телефон" ng-model="newPerson.phone" ui-mask="+7(999) 999-99-99" model-view-value="true"  ui-mask-placeholder ui-mask-placeholder-char="_" />
+					<span class="inputBox">
+						<input type="email" name="email" placeholder="Эл. почта" ng-model="newPerson.email" />
+						<span class="inputValidationMessage" ng-show="newPersonForm.email.$invalid">Enter a valid email.</span>
+					</span>
+					<span class="inputBox">
+						<input type="text" placeholder="Логин" ng-model="newPerson.login" />
+					</span>
+					<span class="inputBox">
+						<input type="password" placeholder="Пароль" ng-model="newPerson.pass" />
+					</span>
+					<span class="inputBox">
+						<input type="file" name="photo" placeholder="Фото" ng-model="newPerson.photo" ng-files="uploadFile($files)" />
+						<span class="inputValidationMessage">{{file.name}}</span>
+					</span>
+					<button ng-show="!newPersonForm.$pristine && newPersonForm.$valid" ng-click="add(newPersonForm.$valid)">Добавить</button>
+				</form>
+			</div>
+			<div class="gridContainer" >
+				<table class="sTable" cellpadding="0" cellspacing="0">
+					<col >
+					<col >
+					<col >
+					<col >
+					<col >
+					<col >
+					<col >
+					<thead>
+					<tr>
+						<th class="colAva"></th>
+						<th class="colName">ФИО</th>
+						<th class="colDob">Дата рождения</th>
+						<th class="colPhone">Телефон</th>
+						<th class="colEmail">Эл. почта</th>
+						<th class="colLogin">Логин</th>
+						<th class="colAction"></th>
+					</tr>
+					</thead>
+					<tr class="person {{person.additionalCssClass}}" ng-repeat="person in persons track by $index" ng-controller="personaCtrl">
+						<td class="colAva">
+							<span class="avaBox">
+								<img class="ava" onload="this.className='ava';" onerror="this.className='ava bad';" src="{{ person.uploadedPhotoUrl }}" />
+							</span>
+						</td>
+						<td class="colName">{{ person.lastName }} {{ person.firstName }} {{ person.midName }}</td>
+						<td class="colDob">{{ person.dob }}</td>
+						<td class="colPhone">{{ person.phone }}</td>
+						<td class="colEmail">{{ person.email }}</td>
+						<td class="colLogin">{{ person.login }}</td>
+						<td class="colAction"><button class="btnEditPerson" ng-click="edit()">Edit</button><button class="btnDeletePerson" ng-click="del()">Delete</button></td>
+					</tr>
+
+				</table>
+			</div><!-- gridContainer END -->
+			<div class="editPersonForm" ng-controller="peersonEditCtrl" ng-show="displayServ.showEditForm">
+				<form name="editPersonForm" novalidate >
+					<span class="inputBox">
+						<input type="text" name="lastNameE" placeholder="Фамилия" ng-model="editPerson.lastName" required />
+						<span class="inputValidationMessage" ng-show="editPersonForm.lastNameE.$invalid && !editPersonForm.lastNameE.$pristine">Enter a valid lastName.</span>
+					</span>
+					<span class="inputBox">
+						<input type="text" name="firstNameE" placeholder="Имя" ng-model="editPerson.firstName" required />
+						<span class="inputValidationMessage" ng-show="editPersonForm.firstNameE.$invalid && !editPersonForm.firstNameE.$pristine">Enter a valid firstName.</span>
+					</span>
+					<span class="inputBox">
+						<input type="text" name="midNameE" placeholder="Отчество" ng-model="editPerson.midName" />
+					</span>
+					<span class="inputBox">
+						<input type="text" name="dobE" placeholder="Дата рождения" ng-model="editPerson.dob" ui-mask="99.99.9999" model-view-value="true"  ui-mask-placeholder ui-mask-placeholder-char="_" />
+					</span>
+					<span class="inputBox">
+						<input type="text" name="phoneE" placeholder="Мобильный телефон" ng-model="editPerson.phone" ui-mask="+7(999) 999-99-99" model-view-value="true"  ui-mask-placeholder ui-mask-placeholder-char="_" />
+					<span class="inputBox">
+						<input type="email" name="emailE" placeholder="Эл. почта" ng-model="editPerson.email" />
+						<span class="inputValidationMessage" ng-show="editPersonForm.emailE.$invalid">Enter a valid email.</span>
+					</span>
+					<span class="inputBox">
+						<input type="text" name="loginE" placeholder="Логин" ng-model="editPerson.login" />
+					</span>
+					<span class="inputBox">
+						<input type="password" name="passE" placeholder="Пароль" ng-model="editPerson.pass" />
+					</span>
+					<span class="inputBox">
+						<input type="file" name="photoE" placeholder="Фото" ng-model="editPerson.photo" ng-files="uploadFile($files)" />
+						<span class="inputValidationMessage">{{file.name}}</span>
+					</span>
+					<button ng-show="!editPersonForm.$pristine && editPersonForm.$valid" ng-click="save(editPersonForm.$valid)">Сохранить</button>
+					<button ng-click="close()">Отмена</button>
+				</form>
+			</div>
+		</div>
+		
+	</div>
+
+<script type="text/javascript">
+//Returns true if it is a DOM element    
+function isElement(o){
+	return (
+		typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+		o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+	);
+}
+
+</script>
+</body>
+</html>
