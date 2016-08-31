@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>title</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<meta name="robots" content="index,follow" />
+	<link rel="stylesheet" type="text/css" href="css/styles.css" />
+	<script src="js/angular.min.js" language="JavaScript" type="text/javascript"></script>
+	<script src="js/stockManage.js" language="JavaScript" type="text/javascript"></script>
+</head>
+<body>
+	<div class="stockManager" ng-app="StockManager">
+		<div class="pageContainer" ng-controller="StockManagerCtrl">
+			
+			<div class="sectionContainer">
+				<h1>{{headline}}</h1>
+				<form >
+					<input type="text" placeholder="Наименование акции" ng-model="stock.name" />
+					<input type="text" placeholder="Цена покупки" ng-pattern="onlyNumbers" ng-model="stock.buyPrice" />
+					<input type="text" placeholder="Количество" ng-pattern="onlyNumbers" ng-model="stock.quantity" />
+					<button ng-click="add()">Добавить</button>
+				</form>
+			</div>
+			<div class="sectionContainer tabContainer">
+				<button class="btnFiltreAll" ng-click="filters.all()">Все</button>
+				<button class="btnFiltreIncomy" ng-click="filters.incomy()">Доходные</button>
+				<button class="btnFiltreLossy" ng-click="filters.lossy()">Убыточные</button>
+				<button class="btnFiltreSummary" ng-click="filters.neutral()">Ни рыба ни мясо</button>
+				<button class="btnFiltreSummary" ng-click="filters.summary()">Сводка</button>
+			</div>
+			<div class="sectionContainer" ng-show="showSummary">
+				<table class="sTable" cellpadding="0" cellspacing="0">
+					<col >
+					<col >
+					<tr class="" >
+						<td class="colName">Всего бумаг:</td>
+						<td class="colAverage">{{ (stockPositions | filter:all).length }}</td>
+					</tr>
+					<tr class="" >
+						<td class="colName">Прибыльных:</td>
+						<td class="colAverage">{{ getIncomyStocksQty() }}</td>
+					</tr>
+					<tr class="" >
+						<td class="colName">Убыточных:</td>
+						<td class="colAverage">{{ getLossyStocksQty() }}</td>
+					</tr>
+					<tr class="" >
+						<td class="colName">Доход/Убыток:</td>
+						<td class="colAverage">${{ getTotalIncomeLoss() }}</td>
+					</tr>
+					<tr class="" >
+						<td class="colName">Текущая цена портфеля:</td>
+						<td class="colAverage">${{ getTotalSpent() }}</td>
+					</tr>
+				</table>
+				<h1>Распределение стоимости портфеля</h1>
+				<table class="sTable" cellpadding="0" cellspacing="0">
+					<col >
+					<col >
+					<col >
+					<col >
+					<thead>
+					<tr>
+						<th>Наименование</th>
+						<th>Процент от стоимости портфеля</th>
+						<th>Стоимость</th>
+						<th>Доход/Убыток</th>
+					</tr>
+					</thead>
+					<tr class="" ng-repeat="stockPosition in stockPositions">
+						<td class="colName">{{ stockPosition.name }}</td>
+						<td class="colAverage">{{(100* stockPosition.spent)/getTotalSpent()}}</td>
+						<td class="colSpent">${{ stockPosition.spent }}</td>
+						<td class="colIncomeLoss"><span class="valIncomeLoss">${{ stockPosition.incomeLoss }}</span></td>
+					</tr>
+				</table>
+			</div>
+			<div class="gridContainer" ng-show="showStocks">
+				<table class="sTable" cellpadding="0" cellspacing="0">
+					<col >
+					<col >
+					<col >
+					<col >
+					<col >
+					<thead>
+					<tr>
+						<th>Наименование</th>
+						<th>Средняя цена</th>
+						<th>Количество</th>
+						<th>Тек.цена</th>
+						<th>Доход/Убыток</th>
+					</tr>
+					</thead>
+					<tr class="{{stockPosition.additionalCssClass}}" ng-repeat="stockPosition in stockPositions | filter:stockPositionsWelth track by $index">
+						<td class="colName">{{ stockPosition.name }}</td>
+						<td class="colAverage">${{ stockPosition.average }}</td>
+						<td class="colQuantity">{{ stockPosition.quantity }}</td>
+						<td class="colCurPrice{{ stockPosition.colCurPriceClass }}">
+							<button class="btnSetCurPrise" ng-click="stockPosition.setCurPrice()">Задать цену</button>
+							<span class="frmSetCurPrise">
+								<input type="text" placeholder="Цена" ng-model="stockPosition.curPriceEdit" />
+								<button class="btnSaveCurPrise" ng-click="stockPosition.saveCurPrice()">Ok</button>
+							</span>
+							<span class="valCurPrice" ng-click="stockPosition.setCurPrice()">${{ stockPosition.curPrice }}</span>
+						</td>
+						<td class="colIncomeLoss{{ stockPosition.colIncomeLossClass }}"><span class="labelIncomeLoss">Сначала задайте цену</span><span class="valIncomeLoss">${{ stockPosition.incomeLoss }}</span></td>
+					</tr>
+
+				</table>
+			</div><!-- gridContainer END -->
+		</div>
+	</div>
+
+<script type="text/javascript">
+//Returns true if it is a DOM element    
+function isElement(o){
+	return (
+		typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
+		o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName==="string"
+	);
+}
+
+</script>
+</body>
+</html>
