@@ -1,0 +1,3 @@
+Copy or usage of this project is strongly prohibited until you have personal written permissions signed and stamped.
+Created specially for testing purposes.
+all libraries included have it's own licenses.
